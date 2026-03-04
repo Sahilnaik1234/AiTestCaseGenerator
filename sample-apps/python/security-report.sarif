@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schemastore.azurewebsites.net/schemas/json/sarif-2.1.0-rtm.5.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": { "driver": { "name": "Bandit + Semgrep (Python)" } },
+      "results": [
+        {
+          "ruleId": "python.lang.security.audit.hardcoded-password",
+          "level": "error",
+          "message": { "text": "Hardcoded transaction IDs in process_payment() could leak in logs." },
+          "locations": [{ "physicalLocation": { "artifactLocation": { "uri": "payment_service.py" }, "region": { "startLine": 36 } } }]
+        },
+        {
+          "ruleId": "python.lang.security.audit.missing-rate-limit",
+          "level": "warning",
+          "message": { "text": "detect_fraud() uses a static country list which can be trivially bypassed." },
+          "locations": [{ "physicalLocation": { "artifactLocation": { "uri": "payment_service.py" }, "region": { "startLine": 50 } } }]
+        }
+      ]
+    }
+  ]
+}

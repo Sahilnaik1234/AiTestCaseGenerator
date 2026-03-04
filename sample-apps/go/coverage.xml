@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Go coverage in JaCoCo-compatible format (go test -coverprofile converted) -->
+<report name="go-order-service">
+  <package name="main">
+    <class name="main/OrderService" sourcefilename="order_service.go">
+      <!-- ValidateEmail() – covered -->
+      <method name="ValidateEmail" desc="(string) bool" line="14">
+        <counter type="INSTRUCTION" missed="0"  covered="4"/>
+        <counter type="BRANCH"      missed="0"  covered="2"/>
+        <counter type="LINE"        missed="0"  covered="2"/>
+      </method>
+      <!-- FormatOrderID() – covered -->
+      <method name="FormatOrderID" desc="(int) string" line="19">
+        <counter type="INSTRUCTION" missed="0"  covered="3"/>
+        <counter type="BRANCH"      missed="0"  covered="0"/>
+        <counter type="LINE"        missed="0"  covered="2"/>
+      </method>
+      <!-- PlaceOrder() – NOT covered -->
+      <method name="PlaceOrder" desc="(int, []int, float64) (string, error)" line="24">
+        <counter type="INSTRUCTION" missed="22" covered="0"/>
+        <counter type="BRANCH"      missed="6"  covered="0"/>
+        <counter type="LINE"        missed="11" covered="0"/>
+      </method>
+      <!-- CancelOrder() – NOT covered -->
+      <method name="CancelOrder" desc="(string, string) error" line="38">
+        <counter type="INSTRUCTION" missed="14" covered="0"/>
+        <counter type="BRANCH"      missed="4"  covered="0"/>
+        <counter type="LINE"        missed="7"  covered="0"/>
+      </method>
+      <!-- GetOrderHistory() – NOT covered -->
+      <method name="GetOrderHistory" desc="(int, int, int) ([]string, error)" line="48">
+        <counter type="INSTRUCTION" missed="16" covered="0"/>
+        <counter type="BRANCH"      missed="4"  covered="0"/>
+        <counter type="LINE"        missed="8"  covered="0"/>
+      </method>
+      <counter type="INSTRUCTION" missed="52" covered="7"/>
+      <counter type="BRANCH"      missed="14" covered="2"/>
+      <counter type="LINE"        missed="26" covered="4"/>
+    </class>
+  </package>
+  <counter type="INSTRUCTION" missed="52" covered="7"/>
+  <counter type="BRANCH"      missed="14" covered="2"/>
+  <counter type="LINE"        missed="26" covered="4"/>
+</report>

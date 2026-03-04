@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- JaCoCo XML report for Java UserService.java -->
+<report name="java-user-service">
+  <package name="com/example/service">
+    <class name="com/example/service/UserService" sourcefilename="UserService.java">
+      <!-- hashPassword() – covered -->
+      <method name="hashPassword" desc="(Ljava/lang/String;)Ljava/lang/String;" line="19">
+        <counter type="INSTRUCTION" missed="0"  covered="12"/>
+        <counter type="BRANCH"      missed="0"  covered="4"/>
+        <counter type="LINE"        missed="0"  covered="5"/>
+      </method>
+      <!-- isEmailValid() – covered -->
+      <method name="isEmailValid" desc="(Ljava/lang/String;)Z" line="27">
+        <counter type="INSTRUCTION" missed="0"  covered="8"/>
+        <counter type="BRANCH"      missed="0"  covered="2"/>
+        <counter type="LINE"        missed="0"  covered="3"/>
+      </method>
+      <!-- validateUserInput() – NOT covered -->
+      <method name="validateUserInput" desc="(Ljava/lang/String;Ljava/lang/String;)V" line="33">
+        <counter type="INSTRUCTION" missed="28" covered="0"/>
+        <counter type="BRANCH"      missed="8"  covered="0"/>
+        <counter type="LINE"        missed="12" covered="0"/>
+      </method>
+      <!-- deleteUser() – NOT covered -->
+      <method name="deleteUser" desc="(Ljava/lang/Long;)Z" line="47">
+        <counter type="INSTRUCTION" missed="14" covered="0"/>
+        <counter type="BRANCH"      missed="4"  covered="0"/>
+        <counter type="LINE"        missed="6"  covered="0"/>
+      </method>
+      <!-- resetPasswordToken() – NOT covered -->
+      <method name="resetPasswordToken" desc="(Ljava/lang/String;)Ljava/lang/String;" line="55">
+        <counter type="INSTRUCTION" missed="10" covered="0"/>
+        <counter type="BRANCH"      missed="2"  covered="0"/>
+        <counter type="LINE"        missed="5"  covered="0"/>
+      </method>
+      <!-- Class-level counters -->
+      <counter type="INSTRUCTION" missed="52" covered="20"/>
+      <counter type="BRANCH"      missed="14" covered="6"/>
+      <counter type="LINE"        missed="23" covered="8"/>
+    </class>
+  </package>
+  <!-- Report-level totals -->
+  <counter type="INSTRUCTION" missed="52" covered="20"/>
+  <counter type="BRANCH"      missed="14" covered="6"/>
+  <counter type="LINE"        missed="23" covered="8"/>
+</report>

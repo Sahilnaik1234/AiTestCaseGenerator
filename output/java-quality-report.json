@@ -1,0 +1,62 @@
+{
+  "coverage_percentage": 25.81,
+  "files_below_threshold": [
+    {
+      "file": "UserService.java",
+      "coverage": 25.81,
+      "missed_lines": 23
+    }
+  ],
+  "uncovered_hotspots": [
+    "UserService.java: validateUserInput (High Risk Logic)"
+  ],
+  "security_summary": {
+    "critical": 0,
+    "high": 1,
+    "medium": 2,
+    "low": 0
+  },
+  "suggested_test_cases": [
+    {
+      "file": "UserService.java",
+      "uncovered_function": "validateUserInput",
+      "suggested_tests": [
+        "Test null or empty input",
+        "Test invalid format/characters",
+        "Test boundary/limit conditions (max/min length)",
+        "Test successful validation with valid input"
+      ]
+    },
+    {
+      "file": "UserService.java",
+      "uncovered_function": "deleteUser",
+      "suggested_tests": [
+        "Test with default parameters",
+        "Test error handling during execution",
+        "Test edge cases for return values",
+        "Test performance under high load"
+      ]
+    },
+    {
+      "file": "UserService.java",
+      "uncovered_function": "resetPasswordToken",
+      "suggested_tests": [
+        "Test with default parameters",
+        "Test error handling during execution",
+        "Test edge cases for return values",
+        "Test performance under high load"
+      ]
+    }
+  ],
+  "risk_score": 45.49,
+  "recommendations": [
+    "Overall coverage is 25.81%, which is below the 70% threshold.",
+    "Prioritize increasing coverage in: UserService.java",
+    "Immediate attention required for High/Critical security vulnerabilities.",
+    "Fix the 3 identified security hotspots."
+  ],
+  "metrics": {
+    "coverage_risk": 74.19,
+    "security_risk": 25
+  }
+}

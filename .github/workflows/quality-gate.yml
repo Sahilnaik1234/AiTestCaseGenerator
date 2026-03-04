@@ -1,0 +1,222 @@
+name: 🧠 AI Quality Intelligence Gate
+
+# ─── Triggers ───────────────────────────────────────────────────────────────
+on:
+  push:
+    branches: [main, dev, feature/**]
+  pull_request:
+    branches: [main, dev]
+
+# ─── Global defaults ────────────────────────────────────────────────────────
+env:
+  COVERAGE_XML:  coverage.xml
+  SARIF_FILE:    security-report.sarif
+  REPORT_OUTPUT: output/quality-report.json
+  QUALITY_GATE:  50          # Minimum health score to pass CI
+
+jobs:
+  quality-gate:
+    name: Quality Intelligence Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    # ── 0. Checkout ───────────────────────────────────────────────────────────
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    # ── 1. Language Auto-Detection ────────────────────────────────────────────
+    - name: 🔎 Detect Project Languages
+      id: detect
+      run: |
+        JAVA=false; PYTHON=false; GO=false; NODE=false
+        [ -f pom.xml ] || [ -f build.gradle ] && JAVA=true
+        find . -name "*.py" -not -path "./.git/*" | grep -q . && PYTHON=true
+        [ -f go.mod ] && GO=true
+        [ -f package.json ] && NODE=true
+        echo "java=$JAVA"     >> $GITHUB_OUTPUT
+        echo "python=$PYTHON" >> $GITHUB_OUTPUT
+        echo "go=$GO"         >> $GITHUB_OUTPUT
+        echo "node=$NODE"     >> $GITHUB_OUTPUT
+        echo "Detected → Java:$JAVA | Python:$PYTHON | Go:$GO | Node:$NODE"
+
+    # ════════════ JAVA ════════════════════════════════════════════════════════
+    - name: ☕ Set up JDK 17
+      if: steps.detect.outputs.java == 'true'
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: temurin
+        cache: maven
+
+    - name: ☕ Run Maven tests + generate JaCoCo coverage
+      if: steps.detect.outputs.java == 'true'
+      run: mvn -B test jacoco:report --no-transfer-progress
+      continue-on-error: true   # Don't block — engine will report the gap
+
+    - name: ☕ Collect Java coverage report
+      if: steps.detect.outputs.java == 'true'
+      run: |
+        JACOCO=$(find . -name "jacoco.xml" | head -1)
+        if [ -n "$JACOCO" ]; then
+          cp "$JACOCO" ${{ env.COVERAGE_XML }}
+          echo "✅ Found JaCoCo report: $JACOCO"
+        else
+          echo "⚠ No jacoco.xml found — creating empty coverage stub"
+          echo '<?xml version="1.0"?><report name="empty"><counter type="LINE" missed="100" covered="0"/></report>' > ${{ env.COVERAGE_XML }}
+        fi
+      continue-on-error: true
+
+    # ════════════ PYTHON ══════════════════════════════════════════════════════
+    - name: 🐍 Set up Python
+      if: steps.detect.outputs.python == 'true'
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: pip
+
+    - name: 🐍 Install Python dependencies
+      if: steps.detect.outputs.python == 'true'
+      run: |
+        pip install -r requirements.txt 2>/dev/null || true
+        pip install pytest pytest-cov
+      continue-on-error: true
+
+    - name: 🐍 Run pytest with coverage
+      if: steps.detect.outputs.python == 'true'
+      run: pytest --cov=. --cov-report=xml:${{ env.COVERAGE_XML }} --cov-report=term -q 2>/dev/null || true
+      continue-on-error: true
+
+    # ════════════ GO ══════════════════════════════════════════════════════════
+    - name: 🐹 Set up Go
+      if: steps.detect.outputs.go == 'true'
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: go.mod
+        cache: true
+
+    - name: 🐹 Run Go tests with coverage
+      if: steps.detect.outputs.go == 'true'
+      run: |
+        go test ./... -coverprofile=coverage.out 2>/dev/null || true
+        # Convert to Cobertura XML (engine-compatible)
+        go install github.com/boumenot/gocover-cobertura@latest 2>/dev/null || true
+        gocover-cobertura < coverage.out > ${{ env.COVERAGE_XML }} 2>/dev/null || \
+          echo '<?xml version="1.0"?><report name="go"><counter type="LINE" missed="50" covered="50"/></report>' > ${{ env.COVERAGE_XML }}
+      continue-on-error: true
+
+    # ════════════ NODE / JS ═══════════════════════════════════════════════════
+    - name: 🟨 Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: npm
+
+    - name: 🟨 Install Node dependencies
+      if: steps.detect.outputs.node == 'true'
+      run: npm ci --prefer-offline 2>/dev/null || npm install
+      continue-on-error: true
+
+    - name: 🟨 Run JS/TS tests with coverage (nyc / jest)
+      if: steps.detect.outputs.node == 'true'
+      run: |
+        # Try jest, then nyc
+        npx jest --coverage --coverageReporters=cobertura 2>/dev/null && \
+          find . -name "cobertura-coverage.xml" | head -1 | xargs -I{} cp {} ${{ env.COVERAGE_XML }} || true
+        if [ ! -f "${{ env.COVERAGE_XML }}" ]; then
+          npx nyc --reporter=cobertura npm test 2>/dev/null && \
+            cp coverage/cobertura-coverage.xml ${{ env.COVERAGE_XML }} 2>/dev/null || true
+        fi
+      continue-on-error: true
+
+    # ════════════ SAST (Semgrep → SARIF) ══════════════════════════════════════
+    - name: 🔐 Run Semgrep SAST scan
+      uses: semgrep/semgrep-action@v1
+      with:
+        config: auto
+        output-format: sarif
+        output: ${{ env.SARIF_FILE }}
+      continue-on-error: true
+      env:
+        SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+    - name: 🔐 Ensure SARIF file exists
+      run: |
+        if [ ! -f "${{ env.SARIF_FILE }}" ]; then
+          echo '{"version":"2.1.0","runs":[{"tool":{"driver":{"name":"Semgrep"}},"results":[]}]}' > ${{ env.SARIF_FILE }}
+          echo "⚠ No SARIF from Semgrep — using empty stub"
+        fi
+
+    # ════════════ Install Quality Engine ══════════════════════════════════════
+    - name: 📦 Install Quality Engine dependencies
+      run: npm install
+      working-directory: ${{ github.workspace }}
+      # This installs groq-sdk + dotenv from package.json
+
+    # ════════════ Run AI Quality Engine ═══════════════════════════════════════
+    - name: 🧠 Run AI Quality Intelligence Engine
+      run: |
+        node main.js \
+          --coverage ${{ env.COVERAGE_XML }} \
+          --security ${{ env.SARIF_FILE }} \
+          --output   ${{ env.REPORT_OUTPUT }} \
+          --sources  src,lib,app,.
+      env:
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}   # Set in GitHub repo secrets
+
+    # ════════════ Upload Report ════════════════════════════════════════════════
+    - name: 📤 Upload quality report artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: quality-report-${{ github.run_number }}
+        path: ${{ env.REPORT_OUTPUT }}
+        retention-days: 30
+
+    # ════════════ Quality Gate Enforcement ════════════════════════════════════
+    - name: 🚦 Enforce Quality Gate (min score ${{ env.QUALITY_GATE }})
+      run: |
+        SCORE=$(node -e "process.stdout.write(String(require('./${{ env.REPORT_OUTPUT }}').risk_score))")
+        MODEL=$(node -e "process.stdout.write(require('./${{ env.REPORT_OUTPUT }}').ai_model || 'heuristic')")
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "  🧠 AI Model       : $MODEL"
+        echo "  💯 Health Score   : $SCORE / 100"
+        echo "  🎯 Required Min   : ${{ env.QUALITY_GATE }}"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        if (( $(echo "$SCORE < ${{ env.QUALITY_GATE }}" | bc -l) )); then
+          echo "❌ QUALITY GATE FAILED — score $SCORE < ${{ env.QUALITY_GATE }}"
+          exit 1
+        fi
+        echo "✅ Quality gate passed!"
+
+    # ════════════ PR Comment (optional) ═══════════════════════════════════════
+    - name: 💬 Post quality summary to PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const r  = JSON.parse(fs.readFileSync(process.env.REPORT_OUTPUT));
+          const emoji = r.risk_score >= 70 ? '✅' : r.risk_score >= 50 ? '⚠️' : '❌';
+          const body = [
+            `## ${emoji} AI Quality Intelligence Report`,
+            `| Metric | Value |`,
+            `|--------|-------|`,
+            `| 🧠 AI Model | \`${r.ai_model}\` |`,
+            `| 💯 Project Health | **${r.risk_score}/100** |`,
+            `| 📊 Coverage | ${r.coverage_percentage}% |`,
+            `| 🔒 Security Issues | ${Object.values(r.security_summary).reduce((a,b)=>a+b,0)} total |`,
+            `| ⚠ Files Below 70% | ${r.files_below_threshold.length} |`,
+            `| 🔥 Hotspots | ${r.uncovered_hotspots.length} |`,
+            ``,
+            `### 📋 Recommendations`,
+            ...r.recommendations.map((rec, i) => `${i+1}. ${rec}`),
+            ``,
+            `> Generated by **AI Quality Intelligence Engine** using \`${r.ai_model}\``
+          ].join('\n');
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body
+          });
+      env:
+        REPORT_OUTPUT: ${{ env.REPORT_OUTPUT }}

@@ -1,0 +1,60 @@
+{
+  "coverage_percentage": 25,
+  "files_below_threshold": [
+    {
+      "file": "payment_service.py",
+      "coverage": 25,
+      "missed_lines": 21
+    }
+  ],
+  "uncovered_hotspots": [],
+  "security_summary": {
+    "critical": 0,
+    "high": 1,
+    "medium": 1,
+    "low": 0
+  },
+  "suggested_test_cases": [
+    {
+      "file": "payment_service.py",
+      "uncovered_function": "process_payment",
+      "suggested_tests": [
+        "Test with default parameters",
+        "Test error handling during execution",
+        "Test edge cases for return values",
+        "Test performance under high load"
+      ]
+    },
+    {
+      "file": "payment_service.py",
+      "uncovered_function": "refund_payment",
+      "suggested_tests": [
+        "Test with default parameters",
+        "Test error handling during execution",
+        "Test edge cases for return values",
+        "Test performance under high load"
+      ]
+    },
+    {
+      "file": "payment_service.py",
+      "uncovered_function": "detect_fraud",
+      "suggested_tests": [
+        "Test with default parameters",
+        "Test error handling during execution",
+        "Test edge cases for return values",
+        "Test performance under high load"
+      ]
+    }
+  ],
+  "risk_score": 47,
+  "recommendations": [
+    "Overall coverage is 25%, which is below the 70% threshold.",
+    "Prioritize increasing coverage in: payment_service.py",
+    "Immediate attention required for High/Critical security vulnerabilities.",
+    "Fix the 2 identified security hotspots."
+  ],
+  "metrics": {
+    "coverage_risk": 75,
+    "security_risk": 20
+  }
+}

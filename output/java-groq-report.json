@@ -1,0 +1,94 @@
+{
+  "generated_at": "2026-03-04T06:28:36.527Z",
+  "ai_model": "heuristic",
+  "coverage_percentage": 25.81,
+  "files_below_threshold": [
+    {
+      "file": "UserService.java",
+      "coverage": 25.81,
+      "missed_lines": 23
+    }
+  ],
+  "uncovered_hotspots": [
+    "UserService.java: validateUserInput (High Risk — Uncovered)",
+    "UserService.java: deleteUser (High Risk — Uncovered)",
+    "UserService.java: resetPasswordToken (High Risk — Uncovered)"
+  ],
+  "security_summary": {
+    "critical": 0,
+    "high": 1,
+    "medium": 2,
+    "low": 0
+  },
+  "security_hotspots": [
+    {
+      "rule_id": "java.lang.security.audit.sql-injection",
+      "severity": "high",
+      "message": "Potential SQL injection in deleteUser(): user-controlled ID passed directly to query.",
+      "location": "UserService.java"
+    },
+    {
+      "rule_id": "java.lang.security.weak-hash",
+      "severity": "medium",
+      "message": "Simulated hash in hashPassword() is not cryptographically secure. Use BCrypt or Argon2.",
+      "location": "UserService.java"
+    },
+    {
+      "rule_id": "java.lang.security.audit.predictable-token",
+      "severity": "medium",
+      "message": "UUID used for password reset token is not cryptographically strong enough.",
+      "location": "UserService.java"
+    }
+  ],
+  "suggested_test_cases": [
+    {
+      "file": "UserService.java",
+      "uncovered_function": "validateUserInput",
+      "line": "33",
+      "suggested_tests": [
+        "Test null or empty input",
+        "Test invalid format/characters",
+        "Test boundary/limit conditions (max/min length)",
+        "Test successful validation with valid input",
+        "Test XSS/injection-style input strings"
+      ],
+      "ai_source": "heuristic"
+    },
+    {
+      "file": "UserService.java",
+      "uncovered_function": "deleteUser",
+      "line": "47",
+      "suggested_tests": [
+        "Test delete of non-existent record",
+        "Test delete with invalid/null ID",
+        "Test cascading deletes if applicable",
+        "Test successful deletion and verify record is gone"
+      ],
+      "ai_source": "heuristic"
+    },
+    {
+      "file": "UserService.java",
+      "uncovered_function": "resetPasswordToken",
+      "line": "55",
+      "suggested_tests": [
+        "Test incorrect credentials",
+        "Test expired or malformed token",
+        "Test account lockout after multiple failed attempts",
+        "Test successful authentication flow",
+        "Test privilege escalation attempt"
+      ],
+      "ai_source": "heuristic"
+    }
+  ],
+  "risk_score": 45.49,
+  "recommendations": [
+    "Overall coverage is 25.81%, which is below the 70% threshold.",
+    "Prioritize increasing coverage in: UserService.java",
+    "Immediate attention required for High/Critical security vulnerabilities.",
+    "Fix the 3 identified security hotspots."
+  ],
+  "metrics": {
+    "coverage_risk": 74.19,
+    "security_risk": 25
+  }
+}

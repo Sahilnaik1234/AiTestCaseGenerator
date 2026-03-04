@@ -1,0 +1,59 @@
+{
+  "coverage_percentage": 13.33,
+  "files_below_threshold": [
+    {
+      "file": "order_service.go",
+      "coverage": 13.33,
+      "missed_lines": 26
+    }
+  ],
+  "uncovered_hotspots": [],
+  "security_summary": {
+    "critical": 0,
+    "high": 0,
+    "medium": 2,
+    "low": 0
+  },
+  "suggested_test_cases": [
+    {
+      "file": "order_service.go",
+      "uncovered_function": "PlaceOrder",
+      "suggested_tests": [
+        "Test with default parameters",
+        "Test error handling during execution",
+        "Test edge cases for return values",
+        "Test performance under high load"
+      ]
+    },
+    {
+      "file": "order_service.go",
+      "uncovered_function": "CancelOrder",
+      "suggested_tests": [
+        "Test with default parameters",
+        "Test error handling during execution",
+        "Test edge cases for return values",
+        "Test performance under high load"
+      ]
+    },
+    {
+      "file": "order_service.go",
+      "uncovered_function": "GetOrderHistory",
+      "suggested_tests": [
+        "Test with default parameters",
+        "Test error handling during execution",
+        "Test edge cases for return values",
+        "Test performance under high load"
+      ]
+    }
+  ],
+  "risk_score": 44,
+  "recommendations": [
+    "Overall coverage is 13.33%, which is below the 70% threshold.",
+    "Prioritize increasing coverage in: order_service.go",
+    "Fix the 2 identified security hotspots."
+  ],
+  "metrics": {
+    "coverage_risk": 86.67,
+    "security_risk": 10
+  }
+}

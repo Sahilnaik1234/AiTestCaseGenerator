@@ -1,0 +1,58 @@
+{
+  "coverage_percentage": 45.95,
+  "files_below_threshold": [
+    {
+      "file": "UserService.java",
+      "coverage": 28.57,
+      "missed_lines": 5
+    },
+    {
+      "file": "AuthService.java",
+      "coverage": 25,
+      "missed_lines": 15
+    }
+  ],
+  "uncovered_hotspots": [
+    "UserService.java: validateUserInput (High Risk Logic)",
+    "AuthService.java: login (High Risk Logic)"
+  ],
+  "security_summary": {
+    "critical": 0,
+    "high": 1,
+    "medium": 1,
+    "low": 0
+  },
+  "suggested_test_cases": [
+    {
+      "file": "UserService.java",
+      "uncovered_function": "validateUserInput",
+      "suggested_tests": [
+        "Test null or empty input",
+        "Test invalid format/characters",
+        "Test boundary/limit conditions (max/min length)",
+        "Test successful validation with valid input"
+      ]
+    },
+    {
+      "file": "AuthService.java",
+      "uncovered_function": "login",
+      "suggested_tests": [
+        "Test incorrect credentials",
+        "Test expired or malformed token",
+        "Test account lockout after multiple attempts",
+        "Test successful authentication"
+      ]
+    }
+  ],
+  "risk_score": 59.57,
+  "recommendations": [
+    "Overall coverage is 45.95%, which is below the 70% threshold.",
+    "Prioritize increasing coverage in: UserService.java, AuthService.java",
+    "Immediate attention required for High/Critical security vulnerabilities.",
+    "Fix the 2 identified security hotspots."
+  ],
+  "metrics": {
+    "coverage_risk": 54.05,
+    "security_risk": 20
+  }
+}

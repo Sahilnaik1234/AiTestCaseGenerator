@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cobertura-style XML for Python payment_service.py (pytest-cov --cov-report xml) -->
+<report name="python-payment-service">
+  <package name="payment_service">
+    <class name="payment_service" sourcefilename="payment_service.py">
+      <!-- format_currency() – covered -->
+      <method name="format_currency" desc="() -> str" line="14">
+        <counter type="INSTRUCTION" missed="0"  covered="4"/>
+        <counter type="BRANCH"      missed="0"  covered="0"/>
+        <counter type="LINE"        missed="0"  covered="3"/>
+      </method>
+      <!-- is_valid_card_number() – covered -->
+      <method name="is_valid_card_number" desc="() -> bool" line="20">
+        <counter type="INSTRUCTION" missed="0"  covered="6"/>
+        <counter type="BRANCH"      missed="0"  covered="2"/>
+        <counter type="LINE"        missed="0"  covered="4"/>
+      </method>
+      <!-- process_payment() – NOT covered -->
+      <method name="process_payment" desc="() -> dict" line="27">
+        <counter type="INSTRUCTION" missed="20" covered="0"/>
+        <counter type="BRANCH"      missed="6"  covered="0"/>
+        <counter type="LINE"        missed="10" covered="0"/>
+      </method>
+      <!-- refund_payment() – NOT covered -->
+      <method name="refund_payment" desc="() -> dict" line="40">
+        <counter type="INSTRUCTION" missed="12" covered="0"/>
+        <counter type="BRANCH"      missed="4"  covered="0"/>
+        <counter type="LINE"        missed="6"  covered="0"/>
+      </method>
+      <!-- detect_fraud() – NOT covered -->
+      <method name="detect_fraud" desc="() -> bool" line="50">
+        <counter type="INSTRUCTION" missed="10" covered="0"/>
+        <counter type="BRANCH"      missed="4"  covered="0"/>
+        <counter type="LINE"        missed="5"  covered="0"/>
+      </method>
+      <counter type="INSTRUCTION" missed="42" covered="10"/>
+      <counter type="BRANCH"      missed="14" covered="2"/>
+      <counter type="LINE"        missed="21" covered="7"/>
+    </class>
+  </package>
+  <counter type="INSTRUCTION" missed="42" covered="10"/>
+  <counter type="BRANCH"      missed="14" covered="2"/>
+  <counter type="LINE"        missed="21" covered="7"/>
+</report>
